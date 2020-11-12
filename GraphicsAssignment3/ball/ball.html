@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <title>Canvas</title>
+
+  <style type="text/css">
+    body {
+      background-color: white;
+    }
+  </style>
+
+</head>
+
+<body>
+  <h1> Fionn Browne</h1>
+  <canvas id="canvas-for-ball" width="666" height="666" style="Border:2px solid #000000"></canvas>
+
+  <script type="text/javascript">
+    // Gets a handle to the element with id canvasOne.
+    var canvas = document.getElementById("canvas-for-ball");
+
+    // Get a 2D context for the canvas.
+    var ctx = canvas.getContext("2d");
+    class Ball {
+      constructor(xCords, yCords, xVelocity, yVelocity, radius) {
+        this.xCords = xCords;
+        this.yCords = yCords;
+        this.xVelocity = xVelocity;
+        this.yVelocity = yVelocity;
+        this.radius = radius;
+        this.rotationDegrees = 0;//used to rotate the drawing
+
+      }//end constructor
+      draw() {
+        ctx.beginPath();
+        ctx.arc(this.xCords, this.yCords, this.radius, 0, 2 * Math.PI), false;
+        ctx.moveTo(this.xCords, this.yCords);
+        var i;
+
+        for (i = 1; i < 8; i++) {
+          var x = this.radius * Math.cos(((i * 2) / 7) * Math.PI + this.rotationDegrees) + this.xCords;
+          var y = this.radius * Math.sin(((i * 2) / 7) * Math.PI + this.rotationDegrees) + this.yCords;
+          ctx.lineTo(x, y);
+          ctx.moveTo(this.xCords, this.yCords);
+
+        }//creating lines inside the beachball
+        //filling sphere
+        ctx.lineTo(this.xCords, this.yCords);
+        ctx.fillStyle = "rgba(82, 248, 82, 2)";
+        ctx.strokeStyle = "purple";
+        ctx.fill();
+        ctx.stroke();
+
+      }//end of draw
+
+      rotate(){ //rotates the ball
+        this.rotationDegrees = this.rotationDegrees + (Math.PI / 180);
+      }
+
+
+    }//end of ball
+    let ball = new Ball(200, 200, 5, 4, 20);// x, y, xvelocity, yvelocity, radius
+
+    // A function to repeat every time the animation loops.
+    function move() {
+      ctx.clearRect(0, 0, 666, 666)//drawing a rectangle that erases everything within to give a claen visual of ball "moving"
+      ball.draw();//calls draw method
+      ball.rotate();//calls rotate method
+      console.log(ball.yCords);//checking y location
+      console.log(ball.xCords);//checking x location
+
+      ball.yCords = ball.yCords + ball.yVelocity;//update y location by y velocity
+      ball.xCords = ball.xCords + ball.xVelocity;//update x location by x velocity
+
+      //y velocity
+      if (ball.yCords + ball.radius >= 666) {//canvas heights is 666 so we want it to change directions here
+        ball.yVelocity = ball.yVelocity * -1;//reverses y direction
+      } else if (ball.yCords - ball.radius <= 0) {//when it hits the wall, balll velocity is changed and goes opposite direction
+        ball.yVelocity = ball.yVelocity * -1;//reverse y velocity
+      }
+
+      //x velocity
+      if (ball.xCords + ball.radius >= 666) {//canvas heights is 666 so we want it to change directions here
+        ball.xVelocity = ball.xVelocity * -1;//reverses x direction
+      } else if (ball.xCords - ball.radius <= 0) {//when it hits the wall, balll velocity is changed and goes opposite direction
+        ball.xVelocity = ball.xVelocity * -1;//reverse x velocity
+      }
+
+      window.requestAnimationFrame(move);
+
+    }
+
+    // Get the animation going.
+    move();
+
+  </script>
+
+</body>
+
+</html>

@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Canvas</title>
+  <style type="text/css">
+  </style>
+</head>
+<body>
+  <canvas id="canvasOne" width="2530" height="1300" style="border:4px solid #000000;"></canvas>
+
+  <script type="text/javascript">
+    //gets a handle to the element with id canvasOne
+    var c = document.getElementById("canvasOne");
+    //Set the canvas up for drawing in 2D.
+    var ctx = c.getContext("2d");
+
+    ctx.font = "30px Arial";
+    //set the fill colour to bright red
+    ctx.fillStyle = "rgb(255, 0, 0)";
+    ctx.fillText("Fionn", 10, 50);//name
+
+    //square
+    var c = document.getElementById("canvasOne");
+    var ctx = c.getContext("2d");
+    ctx.beginPath();
+    ctx.fillRect(300, 150, 300, 150);
+    ctx.strokeStyle = "rgb(123, 111, 222)";
+    ctx.stroke();
+
+    //triangle
+    var c = document.getElementById("canvasOne");
+    var ctx = c.getContext("2d");
+
+    ctx.beginPath();
+    ctx.moveTo(600, 100);
+    ctx.lineTo(700, 300);
+    ctx.lineTo(500, 300);
+    ctx.lineTo(600, 100);
+    ctx.fillStyle = "rgba(0, 180, 0, 0.4)";
+    ctx.fill();
+    ctx.strokeStyle = "rgb(100, 20, 99)";
+    ctx.stroke();
+
+    //circle
+    var c = document.getElementById("canvasOne");
+    var ctx = c.getContext("2d");
+    ctx.beginPath();
+    ctx.arc(705, 200, 90, 0, 2 * Math.PI);
+    ctx.fillStyle = "rgba(30, 300, 200, 0.3)";
+    ctx.fill();
+    ctx.strokeStyle = "rgb(100, 20, 99)";
+    ctx.stroke();
+
+    //circle
+    var c = document.getElementById("canvasOne");
+    var ctx = c.getContext("2d");
+    ctx.beginPath();
+    ctx.arc(1000, 200, 90, 0, 2 * Math.PI);
+    ctx.fillStyle = "rgba(30, 300, 200, 0.3)";
+    ctx.fill();
+    ctx.strokeStyle = "rgb(100, 20, 99)";
+    ctx.stroke();
+
+    //circle 2
+    var c = document.getElementById("canvasOne");
+    var ctx = c.getContext("2d");
+    ctx.beginPath();
+    ctx.arc(755, 350, 90, 0, 2 * Math.PI);
+    ctx.fillStyle = "rgba(300, 100, 200, 0.3)";
+    ctx.fill();
+    ctx.strokeStyle = "rgb(100, 20, 99)";
+    ctx.stroke();
+
+    //---------------------------------------------- week 2 ------------------------------------------------------//
+
+    class Packman{
+      //takes x,y,radius,and oriantation
+      constructor(x,y,radius,faceleft){
+        this.x = x;
+        this.y = y;
+        this.radius = radius;
+        this.faceleft = faceleft;
+        ctx.fillStyle = "rbg(255,255,0)";//yellow
+
+        //if facelft is true, circle will be drawn cc-wise go from 3-5 radians if facing left or 1-7 facing right
+        let startAngle = (faceleft)? ((3/4) * Math.PI) : ((1/4) * Math.PI);
+        let endAngle = (faceleft)? ((5/4) * Math.PI) : ((7/4) * Math.PI);
+
+        //three quarter circle
+        ctx.beginPath();
+        ctx.arc(x,y,radius, startAngle, endAngle, faceleft);
+
+        //line from current point (end arc) to middle cords (top lip)
+        ctx.lineTo(x,y)
+
+//line from current point (middle), to start of arc (bottom lip)
+          let k = radius * Math.cos(startAngle) + x;
+          let v = radius * Math.sin(startAngle) + y;
+          ctx.lineTo(k,v)
+
+          ctx.fill();
+          ctx.stroke();
+      }
+    }
+    packman1 = new Packman(400,850,40,true);
+    ctx.beginPath();
+    ctx.arc(400, 830, 10, 0, 2 * Math.PI, false);
+    ctx.fillStyle = "rgb(0, 0, 0)";
+    ctx.fill();
+    packman2 = new Packman(300,850,50,false);
+    ctx.beginPath();
+    ctx.arc(300, 815, 10, 0, 2 * Math.PI, true);
+    ctx.fillStyle = "rgb(300, 0, 0)";
+    ctx.fill();
+
+    ctx.beginPath();
+    ctx.arc(200, 500, 100, 0.25 * Math.PI, 1.25 * Math.PI, false);
+    ctx.fillStyle = "rgb(255, 255, 0)";
+    ctx.fill();
+    ctx.beginPath();
+    ctx.arc(200, 500, 100, 0.75 * Math.PI, 1.75 * Math.PI, false);
+    ctx.fill();
+    ctx.beginPath();
+    ctx.arc(200, 460, 20, 0, 2 * Math.PI, false);
+    ctx.fillStyle = "rgb(0, 0, 0)";
+    ctx.fill();
+    //packman inverted
+    ctx.beginPath();
+    ctx.arc(400, 500, 75, 0.25 * Math.PI, 1.25 * Math.PI, true);
+    ctx.fillStyle = "rgb(255, 255, 0)";
+    ctx.fill();
+    ctx.beginPath();
+    ctx.arc(400, 500, 75, 0.75 * Math.PI, 1.75 * Math.PI, true);
+    ctx.fill();
+    ctx.beginPath();
+    ctx.arc(400, 460, 15, 0, 2 * Math.PI, true);
+    ctx.fillStyle = "rgb(0, 0, 0)";
+    ctx.fill();
+//----------------------------------------------------------------------------------------------beachball
+ class Beachball{
+   constructor(x,y,radius){
+     this.x = x;
+     this.y = y;
+     this.radius = radius;
+   }
+   draw(){
+     var count=2;
+     ctx.beginPath();
+     ctx.arc(this.x, this.y, this.radius, 0, 2 * Math.PI, true);
+     ctx.lineTo(this.x, this.y);
+
+     while (count != 14) {
+          //line from center 
+          var k = this.radius * Math.cos(count / 7 * Math.PI) + this.x;
+          var v = this.radius * Math.sin(count / 7 * Math.PI) + this.y;
+          ctx.lineTo(k, v);
+          count = count + 2;
+          ctx.moveTo(this.x, this.y);
+        }
+        ctx.fillStyle = "rgba(255, 170, 37, 1)";
+        ctx.strokeStyle = "black";
+        ctx.fill();
+        ctx.stroke();
+   }
+ }//beachball class
+ beachball1 = new Beachball(250,700,40);
+ document.getElementById("canvasOne").innerHTML = beachball1.draw();
+ beachball2 = new Beachball(350,700,50);
+ document.getElementById("canvasOne").innerHTML = beachball2.draw();
+ beachball3 = new Beachball(475,700,60);
+ document.getElementById("canvasOne").innerHTML = beachball3.draw();
+   
+  </script>
+</body>
+</html>

@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+
+<html>
+<script src="https://code.jquery.com/jquery-3.1.0.min.js"></script>
+
+<head>
+  <meta charset="UTF-8">
+  <title>Canvas</title>
+
+  <style type="text/css">
+    canvas {
+      border: 1px solid grey;
+    }
+  </style>
+
+</head>
+
+<body>
+  <p>Fionn Browne</p>
+
+  <canvas id="canvas-for-ball" width="999" height="999"></canvas>
+
+  <script type="text/javascript">
+    var noClicks = 0;
+
+
+    //===================================================================
+    class beachBall {
+      //initalising variables
+      constructor(centerX, centerY, velocityX, velocityY, radius, rotateSpeed) {
+        this.centerX = centerX;
+        this.centerY = centerY;
+        this.velocityX = velocityX;
+        this.velocityY = velocityY;
+        this.radius = radius;
+        this.rotateSpeed = rotateSpeed;
+        this.rotationDegrees = 0;//used to rotate the drawing
+        this.direction = (Math.PI / (180 / rotateSpeed));// is used to controll rotation
+
+      }//end constructor
+
+      draw() {//drawing the beachball
+        ctx.beginPath();
+        ctx.arc(this.centerX, this.centerY, this.radius, 0, 2 * Math.PI), false;
+        ctx.moveTo(this.centerX, this.centerY);
+        var i;
+
+        for (i = 1; i < 8; i++) {//creating lines inside the beachball
+          var x = this.radius * Math.cos(((i * 2) / 7) * Math.PI + this.rotationDegrees) + this.centerX;
+          var y = this.radius * Math.sin(((i * 2) / 7) * Math.PI + this.rotationDegrees) + this.centerY;
+          ctx.lineTo(x, y);
+          ctx.moveTo(this.centerX, this.centerY);
+
+        }
+        //filling sphere
+        // ctx.lineTo(this.centerX, this.centerY);
+        ctx.fillStyle = "rgb(100, 248, 82)";
+        ctx.strokeStyle = "rgb(255, 0, 255)";
+        ctx.fill();
+        ctx.stroke();
+
+      }//end of draw
+
+      rotate() { //rotates the ball
+        this.direction = (Math.PI / (180 / this.rotateSpeed));
+        this.rotationDegrees = this.rotationDegrees + this.direction;
+        if (this.rotationDegrees >= (2 * Math.PI)) {
+          this.rotationDegrees = 0;
+        }
+
+      }
+
+
+    }//end of ball
+    let ball = [];//creating the beachballs
+    ball.push(new beachBall(200, 200, 50, 60, 40, 3));// x cords, y cords, x velocity, y velocity,radius, rotate speed
+    ball.push(new beachBall(300, 300, 200, 6, 20, 5));
+
+    //====================================================================
+
+    // Gets a handle to the element with id canvasOne.
+    var canvas = document.getElementById("canvas-for-ball");
+    // Get a 2D context for the canvas.
+    var ctx = canvas.getContext("2d");
+    // Make the fill style red.
+    ctx.fillStyle = "rgb(255, 0, 0)";
+
+    let topPosition = canvas.offsetTop;
+    let leftPosition = canvas.offsetLeft;
+    let gravity = 0.1;
+    let friction = 0.99;
+
+    //==========================================================================
+    function repeatme() {//code applys to all balls
+      for (var i = 0; i < ball.length; i++) {
+
+        ctx.clearRect(0, 0, 999, 999);//draw rectangle that clears everything within itself.
+        for(var j = 0; j < ball.length; j++){
+          ball[j].draw();
+        }
+        //ball[i].draw();
+        ball[i].rotate();
+
+        //wconsole.log(i);
+
+        ball[i].centerY += ball[i].velocityY;//moves y location by y velocity
+        ball[i].centerX += ball[i].velocityX;//moves x location by x velocity
+        ball[i].velocityY = ball[i].velocityY + gravity;// to reduce Y velocity
+        ball[i].velocityX = ball[i].velocityX * friction;//to reduce speed
+
+        //y velocity
+        if (ball[i].centerY + ball[i].radius >= 999) {//canvas heights is 999 so we want it to change directions here
+          ball[i].velocityY = ball[i].velocityY * -.8;//reverses y direction
+          ball[i].rotationDegrees = ball[i].rotationDegrees - 180;
+          ball[i].direction = ball[i].direction * -.8;
+        } else if (ball[i].centerY - ball[i].radius <= 0) {//when it hits the wall, balll velocity is changed and goes opposite direction
+          ball[i].velocityY = ball[i].velocityY * -.8;//reverse y velocity
+          ball[i].rotationDegrees = ball[i].rotationDegrees - 180;
+          ball[i].direction = ball[i].direction * -.8;
+        }
+
+        //x velocity
+        if (ball[i].centerX + ball[i].radius >= 999) {//canvas width is 999 so we want it to change directions here
+          ball[i].velocityX = ball[i].velocityX * -1;//reverses x direction
+          ball[i].rotationDegrees = ball[i].rotationDegrees - 180;
+          ball[i].direction = ball[i].direction * -1;
+        } else if (ball[i].centerX - ball[i].radius <= 0) {//when it hits the wall, balll velocity is changed and goes opposite direction
+          ball[i].velocityX = ball[i].velocityX * -1;//reverse x velocity
+          ball[i].rotationDegrees = ball[i].rotationDegrees - 180;
+          ball[i].direction = ball[i].direction * -1;
+        }
+      }//end of for loop
+      window.requestAnimationFrame(repeatme);
+
+    }//end of repeatme
+    
+    //==========================================================================
+
+    //event listniers (controlls)
+    //==========================================================================
+    //add mouse code here
+   /* canvas.addEventListener("click", function (event) {
+      ctx.beginPath();
+      ctx.arc(event.clientX - leftPosition, event.clientY - topPosition, 6, 0, 2 * Math.PI);
+      ctx.fill();
+
+      noClicks += 1;
+      console.log(noClicks);
+      ball[0].centerX = event.clientX - leftPosition;
+      ball[0].centerY = event.clientY - topPosition;
+    });//end  of  single click select at clientX and clientY draw*/
+     
+    //add mouse code here for double click to reposition
+    canvas.addEventListener("dblclick", function (event) {
+      ball[0].centerX = event.clientX - leftPosition;
+      ball[0].centerY = event.clientY - topPosition;
+    });//end of double click
+
+    //Add keyboard JQuery code 
+    window.addEventListener("keypress", function (event) {
+      console.log(event);
+
+    });
+
+    //keypress with jQuery for moving
+    $(document.body).on('keydown', function (e) {
+      console.log(e.which);
+      switch (e.which) {
+        // key code for Up (w) 
+        case 87:
+          ball[0].velocityY -= 10;
+          console.log('W key pressed!');
+          break;
+
+        // key code for Left (a) 
+        case 65:
+          ball[0].velocityX -= 1;
+          console.log('A key pressed!');
+          break;
+
+        // key code for Down (s) 
+        case 83:
+          ball[0].velocityY += 1;
+          console.log('S key pressed!');
+          break;
+
+        // key code for Right (d) 
+        case 68:
+          ball[0].velocityX += 1;
+          console.log('D key pressed!');
+          break;
+        //key code for right (r)
+        case 82:
+          ball[0].rotateSpeed += 1;
+          console.log("R");
+          break;
+
+        //key code for left (T)
+        case 84:
+          ball[0].rotateSpeed -= 1;
+          console.log("T");
+      }
+    });//end of keypress
+    //===================================================================
+    //invoking repeatme to draw the beachball
+    repeatme();
+  </script>
+
+</body>
+
+</html>
