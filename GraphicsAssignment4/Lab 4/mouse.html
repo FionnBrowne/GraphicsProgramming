@@ -61,8 +61,9 @@
 
       }//end of draw
 
+      //https://stackoverflow.com/questions/46748156/html5-canvas-rotate-moving-bouncing-ball
       rotate() { //rotates the ball
-        this.direction = (Math.PI / (180 / this.rotateSpeed));
+        this.direction = (Math.PI / (180 / this.rotateSpeed));//(Math.PI / 180) is one degree step
         this.rotationDegrees = this.rotationDegrees + this.direction;
         if (this.rotationDegrees >= (2 * Math.PI)) {
           this.rotationDegrees = 0;
@@ -87,8 +88,8 @@
 
     let topPosition = canvas.offsetTop;
     let leftPosition = canvas.offsetLeft;
-    let gravity = 0.1;
-    let friction = 0.99;
+    let gravity = 0.9;//reduces y velocity
+    let friction = 0.99;//reduces x velocity
 
     //==========================================================================
     function repeatme() {//code applys to all balls
@@ -110,13 +111,14 @@
 
         //y velocity
         if (ball[i].centerY + ball[i].radius >= 999) {//canvas heights is 999 so we want it to change directions here
-          ball[i].velocityY = ball[i].velocityY * -.8;//reverses y direction
+          ball[i].velocityY = ball[i].velocityY * -.4;//reverses y direction
           ball[i].rotationDegrees = ball[i].rotationDegrees - 180;
-          ball[i].direction = ball[i].direction * -.8;
+          ball[i].direction = ball[i].direction * -.4;
         } else if (ball[i].centerY - ball[i].radius <= 0) {//when it hits the wall, balll velocity is changed and goes opposite direction
-          ball[i].velocityY = ball[i].velocityY * -.8;//reverse y velocity
+          ball[i].velocityY = ball[i].velocityY * -.4;//reverse y velocity
           ball[i].rotationDegrees = ball[i].rotationDegrees - 180;
-          ball[i].direction = ball[i].direction * -.8;
+          ball[i].direction = ball[i].direction * -.4;
+          //https://developer.mozilla.org/en-US/docs/Games/Tutorials/2D_Breakout_game_pure_JavaScript/Bounce_off_the_walls
         }
 
         //x velocity
