@@ -25,7 +25,7 @@
 
 
     //===================================================================
-    class beachBall {
+    class BeachBall {//class usually starts with capital letter
       //initalising variables
       constructor(centerX, centerY, velocityX, velocityY, radius, rotateSpeed) {
         this.centerX = centerX;
@@ -39,13 +39,13 @@
 
       }//end constructor
 
-      draw() {//drawing the beachball
+      draw() {//drawing the BeachBall
         ctx.beginPath();
         ctx.arc(this.centerX, this.centerY, this.radius, 0, 2 * Math.PI), false;
         ctx.moveTo(this.centerX, this.centerY);
         var i;
 
-        for (i = 1; i < 8; i++) {//creating lines inside the beachball
+        for (i = 1; i < 8; i++) {//creating lines inside the BeachBall
           var x = this.radius * Math.cos(((i * 2) / 7) * Math.PI + this.rotationDegrees) + this.centerX;
           var y = this.radius * Math.sin(((i * 2) / 7) * Math.PI + this.rotationDegrees) + this.centerY;
           ctx.lineTo(x, y);
@@ -74,8 +74,8 @@
 
     }//end of ball
     let ball = [];//creating the beachballs
-    ball.push(new beachBall(200, 200, 50, 60, 40, 3));// x cords, y cords, x velocity, y velocity,radius, rotate speed
-    ball.push(new beachBall(300, 300, 200, 6, 20, 5));
+    ball.push(new BeachBall(200, 200, 50, 60, 40, 3));// x cords, y cords, x velocity, y velocity,radius, rotate speed
+    ball.push(new BeachBall(300, 300, 200, 6, 20, 5));
 
     //====================================================================
 
@@ -204,7 +204,7 @@
       }
     });//end of keypress
     //===================================================================
-    //invoking repeatme to draw the beachball
+    //invoking repeatme to draw the BeachBall
     repeatme();
   </script>
 
