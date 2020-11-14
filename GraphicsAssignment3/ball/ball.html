@@ -34,7 +34,8 @@
         this.rotationDegrees = 0;//used to rotate the drawing
 
       }//end constructor
-      draw() {
+      //===================================================================
+      draw() {//drawing the sphere
         ctx.beginPath();
         ctx.arc(this.xCords, this.yCords, this.radius, 0, 2 * Math.PI), false;
         ctx.moveTo(this.xCords, this.yCords);
@@ -56,9 +57,10 @@
 
       }//end of draw
 
-      rotate(){ //rotates the ball
-        this.rotationDegrees = this.rotationDegrees + (Math.PI / 180);
-      }
+      //https://stackoverflow.com/questions/46748156/html5-canvas-rotate-moving-bouncing-ball
+      rotate() { //rotates the ball
+        this.rotationDegrees = this.rotationDegrees + (Math.PI / 180);//(Math.PI / 180) is one degree step
+      }//every time this is redrawn it will have rotated 1 degree
 
 
     }//end of ball
@@ -80,7 +82,7 @@
         ball.yVelocity = ball.yVelocity * -1;//reverses y direction
       } else if (ball.yCords - ball.radius <= 0) {//when it hits the wall, balll velocity is changed and goes opposite direction
         ball.yVelocity = ball.yVelocity * -1;//reverse y velocity
-      }
+      }//https://developer.mozilla.org/en-US/docs/Games/Tutorials/2D_Breakout_game_pure_JavaScript/Bounce_off_the_walls
 
       //x velocity
       if (ball.xCords + ball.radius >= 666) {//canvas heights is 666 so we want it to change directions here
@@ -89,10 +91,10 @@
         ball.xVelocity = ball.xVelocity * -1;//reverse x velocity
       }
 
-      window.requestAnimationFrame(move);
+      window.requestAnimationFrame(move);//calls a specific function to update animation before the next repaint in this case, move
 
-    }
-
+    }//end of move function
+    //===================================================================
     // Get the animation going.
     move();
 
