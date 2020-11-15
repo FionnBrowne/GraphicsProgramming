@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+
+<html>
+<script src="https://code.jquery.com/jquery-3.1.0.min.js"></script>
+<!--import so that jquery can be used on the keypress-->
+
+<head>
+  <meta charset="UTF-8">
+  <title>Canvas</title>
+
+  <style type="text/css">
+    canvas {
+      border: 1px solid grey;
+    }
+  </style>
+
+</head>
+
+<body>
+  <p>Fionn Browne</p>
+
+  <canvas id="canvas-for-ball" width="999" height="999"></canvas>
+
+  <script type="text/javascript">
+    var noClicks = 0;
+
+
+    //===================================================================
+    class BeachBall {//class usually starts with capital letter
+      //initalising variables
+      constructor(centerX, centerY, velocityX, velocityY, radius, rotateSpeed, color, mass) {// constructors
+        this.centerX = centerX;//center of beachball x position
+        this.centerY = centerY;//center of beachball y position
+        this.velocityX = velocityX;//ball velocity on x axis
+        this.velocityY = velocityY;//ball velocity on y axis
+        this.radius = radius;
+        this.rotateSpeed = rotateSpeed;//how many degrees the beachball spins
+        this.rotationDegrees = 0;//used to rotate the drawing
+        this.direction = (Math.PI / (180 / rotateSpeed));// is used to controll direction of the ball
+        this.color = color;// used to change color of the ball on collisions
+        this.mass = mass;//the weight of the ball, used for the conservation of momentum formula.
+
+      }//end constructor
+
+      draw() {//drawing the BeachBall
+        ctx.beginPath();
+        ctx.arc(this.centerX, this.centerY, this.radius, 0, 2 * Math.PI), false;
+        ctx.moveTo(this.centerX, this.centerY);
+        var i;
+
+        for (i = 1; i < 8; i++) {//creating lines inside the BeachBall
+          var x = this.radius * Math.cos(((i * 2) / 7) * Math.PI + this.rotationDegrees) + this.centerX;
+          var y = this.radius * Math.sin(((i * 2) / 7) * Math.PI + this.rotationDegrees) + this.centerY;
+          ctx.lineTo(x, y);
+          ctx.moveTo(this.centerX, this.centerY);
+
+        }
+        if (this.color == 0) {
+          ctx.fillStyle = "rgb(200, 20, 2)";
+        }
+        else if (this.color == 1) {
+          ctx.fillStyle = "rgb(300, 30, 3)";
+        }
+        else if (this.color == 2) {
+          ctx.fillStyle = "rgb(100, 11, 1)";
+        }
+        else if (this.color == 3) {
+          ctx.fillStyle = "rgb(131, 31, 4)";
+        }
+        else if (this.color == 4) {
+          ctx.fillStyle = "rgb(212, 22, 4)";
+        }
+
+        //filling sphere
+        // ctx.lineTo(this.centerX, this.centerY);
+        ctx.strokeStyle = "rgb(66, 66, 66)";
+        ctx.fill();
+        ctx.stroke();
+
+      }//end of draw
+
+      //https://stackoverflow.com/questions/46748156/html5-canvas-rotate-moving-bouncing-ball
+      rotate() { //rotates the ball
+        this.direction = (Math.PI / (180 / this.rotateSpeed));//(Math.PI / 180) is one degree step
+        this.rotationDegrees = this.rotationDegrees + this.direction;
+        if (this.rotationDegrees >= (2 * Math.PI)) {
+          this.rotationDegrees = 0;
+        }
+      }
+
+    }//end of ball
+    var ball = [];//creating the beachballs
+    ball.push(new BeachBall(200, 200, 20, 10, 40, 3, 3, 4));// x cords, y cords, x velocity, y velocity, radius, rotate speed, color, mass
+    ball.push(new BeachBall(300, 300, 30, 6, 20, 5, 2, 4));//push() method adds one or more elements to the end of an array
+
+    //====================================================================
+    // Gets a handle to the element with id canvasOne.
+    var canvas = document.getElementById("canvas-for-ball");
+    // Get a 2D context for the canvas.
+    var ctx = canvas.getContext("2d");
+    // Make the fill style red.
+    ctx.fillStyle = "rgb(255, 0, 0)";
+
+    let topPosition = canvas.offsetTop;//mouse offset
+    let leftPosition = canvas.offsetLeft;//mouse offset
+    let gravity = 0.1;//reduces y velocity
+    let friction = 0.99;//reduces x velocity
+
+    //==========================================================================
+    //collision check
+    function checkCollision() {
+      for (let i = 0; i < ball.length; i++) {
+        for (let j = 0; j < ball.length && j != i; j++) {
+          let distance = Math.sqrt(Math.pow(((ball[j].centerX - ball[i].centerX)), 2) + Math.pow(ball[j].centerY - ball[i].centerY, 2));
+          // console.log(distance);
+          if (distance <= ball[i].radius + ball[j].radius) {
+            console.log("Collision!");
+            handleCollision(ball[i], ball[j]);
+
+          }//handles collision
+        }
+      }
+    }
+
+    //once collision is detected, handle the collision
+    function handleCollision(firstBall, secondBall) {//handles collision and reaction
+      let dx = firstBall.centerX - secondBall.centerX;//calculates horizontal distance between balls
+      let dy = firstBall.centerY - secondBall.centerY;//calculate vertical distance between balls
+
+      let angleOfCollision = Math.atan2(dy, dx);//calculate the collision angle using trig
+      //calculate the firstBall speed(magnitude)
+      let magnitude_1 = Math.sqrt(firstBall.velocityX * firstBall.velocityX + firstBall.velocityY * secondBall.velocityY);
+      //calculate the secondBall speed(magnitude)
+      let magnitude_2 = Math.sqrt(secondBall.velocityX * secondBall.velocityX + secondBall.velocityY * secondBall.velocityY);
+      //determine balls direction using trig
+      let direction_1 = Math.atan2(firstBall.velocityY, firstBall.velocityX);
+      let direction_2 = Math.atan2(secondBall.velocityY, secondBall.velocityX);
+      //calculate new velocityX using trig applied to the difference between the direction angle and the collision  angle
+      let newXvelocity1 = magnitude_1 * Math.cos(direction_1 - angleOfCollision);
+      let newYvelocity1 = magnitude_1 * Math.sin(direction_1 - angleOfCollision);
+      //same but second ball
+      let newXvelocity2 = magnitude_2 * Math.cos(direction_2 - angleOfCollision);
+      let newYvelocity2 = magnitude_2 * Math.sin(direction_2 - angleOfCollision);
+      //determine final x speed for firstball
+      let finalXvelocity1 = ((firstBall.mass - secondBall.mass) * newXvelocity1 + (secondBall.mass * secondBall.mass) * newXvelocity2) / (firstBall.mass + secondBall.mass);
+      //determine final x speed for secondBall
+      let finalXvelocity2 = ((firstBall.mass + firstBall.mass) * newXvelocity1 + (secondBall.mass - firstBall.mass) * newXvelocity2) / (firstBall.mass + secondBall.mass);
+      //y speed doesnt change, its a 1D collision
+      let finalYvelocity1 = newYvelocity1;
+      let finalYvelocity2 = newYvelocity2;
+      //Determine x and y speeds on the original axis system using trig.
+      firstBall.velocityX = Math.cos(angleOfCollision) * finalXvelocity1 + Math.cos(angleOfCollision + Math.PI / 2) * finalYvelocity1;
+      firstBall.velocityY = Math.sin(angleOfCollision) * finalXvelocity1 + Math.sin(angleOfCollision + Math.PI / 2) * finalYvelocity1;
+      secondBall.velocityX = Math.cos(angleOfCollision) * finalXvelocity2 + Math.cos(angleOfCollision + Math.PI / 2) * finalYvelocity2;
+      secondBall.velocityY = Math.sin(angleOfCollision) * finalXvelocity2 + Math.sin(angleOfCollision + Math.PI / 2) * finalYvelocity2;
+
+      firstBall.color = Math.floor(Math.random() * 4);//causes ball to change colour
+      secondBall.color = Math.floor(Math.random() * 4);//floor function returns the largest integer less than or equal to a given number.
+    }
+
+    //==========================================================================
+    function repeatme() {//code applys to all balls
+      for (var i = 0; i < ball.length; i++) {
+        ctx.clearRect(0, 0, 999, 999);//draw rectangle that clears everything within itself.
+        checkCollision();
+
+        for (var j = 0; j < ball.length; j++) {
+          ball[j].draw();
+        }
+
+        ball[i].rotate();
+
+        ball[i].centerY += ball[i].velocityY;//moves y location by y velocity
+        ball[i].centerX += ball[i].velocityX;//moves x location by x velocity
+        ball[i].velocityY = ball[i].velocityY + gravity;// to reduce Y velocity
+        ball[i].velocityX = ball[i].velocityX * friction;//to reduce speed
+
+        ball[i].velocityX.toFixed(1);//1 decimal place
+        ball[i].velocityY.toFixed(1);
+
+        console.log(ball[0].velocityX + " " + ball[0].velocityY);
+
+        //y velocity
+        if (ball[i].centerY + ball[i].radius >= 999) {//canvas heights is 999 so we want it to change directions here
+          ball[i].velocityY = ball[i].velocityY * -.7;//reverses y direction
+          ball[i].velocityY += -0.2;
+          if (ball[i].centerY + ball[i].radius >= 1000) {
+            ball[i].velocityY += -0.3;
+          }
+        } else if (ball[i].centerY - ball[i].radius <= 0) {//when it hits the wall, balll velocity is changed and goes opposite direction
+          ball[i].velocityY = ball[i].velocityY * -.7;//reverse y velocity
+          ball[i].velocityY += 0.2;
+          if (ball[i].centerX + ball[i].radius <= -1) {
+            ball[i].velocityY += 0.3;
+          }
+          //https://developer.mozilla.org/en-US/docs/Games/Tutorials/2D_Breakout_game_pure_JavaScript/Bounce_off_the_walls
+        }
+
+        //x velocity
+        if (ball[i].centerX + ball[i].radius >= 999) {//canvas width is 999 so we want it to change directions here
+          ball[i].velocityX = ball[i].velocityX * -1;//reverses x direction
+          ball[i].velocityY += -0.2;
+          if (ball[i].centerX + ball[i].radius >= 1000) {
+            ball[i].velocityX += -0.3;
+          }
+        } else if (ball[i].centerX - ball[i].radius <= 0) {//when it hits the wall, balll velocity is changed and goes opposite direction
+          ball[i].velocityX = ball[i].velocityX * -1;//reverse x velocity
+          ball[i].velocityY += 0.2;
+          if (ball[i].centerX + ball[i].radius <= 1000) {
+            ball[i].velocityX += 0.3;
+          }
+        }
+      }//end of for loop
+      window.requestAnimationFrame(repeatme);//calls a specific function to update animation before the next repaint in this case, repeatme
+
+    }//end of repeatme
+    //==========================================================================
+
+    //event listniers (controlls)
+    //==========================================================================
+
+    //add mouse code here for double click to reposition
+    canvas.addEventListener("dblclick", function (event) {
+      ball.push(new BeachBall(event.clientX - leftPosition, event.clientY - topPosition, Math.floor(Math.random() * 50), Math.floor(Math.random * 40), Math.floor(Math.random() * 15), Math.floor(Math.random() * 10),
+        Math.floor(Math.random() * 4), Math.floor(Math.random() * 5)));//giving it the new position on double click and a random size and position
+      // x cords, y cords, x velocity, y velocity, radius, rotate speed, color, mass
+    });//end of double click
+
+    //Add keyboard JQuery code 
+    window.addEventListener("keypress", function (event) {
+      console.log(event);
+
+    });
+
+    //keypress with jQuery for moving
+    $(document.body).on('keydown', function (e) {
+      console.log(e.which);
+      switch (e.which) {
+        // key code for Up (w) 
+        case 87:
+          ball[0].velocityY -= 10;
+          console.log('W key pressed!');
+          break;
+
+        // key code for Left (a) 
+        case 65:
+          ball[0].velocityX -= 1;
+          console.log('A key pressed!');
+          break;
+
+        // key code for Down (s) 
+        case 83:
+          ball[0].velocityY += 1;
+          console.log('S key pressed!');
+          break;
+
+        // key code for Right (d) 
+        case 68:
+          ball[0].velocityX += 1;
+          console.log('D key pressed!');
+          break;
+        //key code for right (r)
+        case 82:
+          ball[0].rotateSpeed += 1;
+          console.log("R");
+          break;
+
+        //key code for left (T)
+        case 84:
+          ball[0].rotateSpeed -= 1;
+          console.log("T");
+      }
+    });//end of keypress
+    //===================================================================
+    //invoking repeatme to draw the BeachBall
+    repeatme();
+  </script>
+
+</body>
+
+</html>

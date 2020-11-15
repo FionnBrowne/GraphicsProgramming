@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+
+<html>
+
+<script src="https://code.jquery.com/jquery-3.1.0.min.js"></script>
+
+<head>
+	<meta charset="UTF-8">
+	<title>Canvas</title>
+
+	<style type="text/css">
+		canvas {
+			border: 1px solid grey;
+		}
+	</style>
+
+</head>
+
+<body>
+	<h1> Fionn Browne</h1>
+	<canvas id="canvas-for-ball"></canvas>
+
+	<script type="text/javascript">
+
+
+		// Gets a handle to the element with id canvasOne.
+		var canvas = document.getElementById("canvas-for-ball");
+		// Get a 2D context for the canvas.
+		var ctx = canvas.getContext("2d");
+		// Make the fill style red.
+		ctx.fillStyle = "rgb(255, 0, 0)";
+
+
+		//add mouse code here for double click to reposition
+		canvas.addEventListener("dblclick", function (event) {
+      ball.push(new BeachBall(event.clientX - leftPosition, event.clientY - topPosition, Math.floor(Math.random() * 101), Math.floor(Math.random * 10), Math.floor(Math.random() * 10), Math.floor(Math.random() * 8),
+        Math.floor(Math.random() * 4), Math, floor(Math.random() * 5)));
+    });//end of double click
+
+    //Add keyboard JQuery code 
+    window.addEventListener("keypress", function (event) {
+      console.log(event);
+
+    });
+
+    //keypress with jQuery for moving
+    $(document.body).on('keydown', function (e) {
+      console.log(e.which);
+      switch (e.which) {
+        // key code for Up (w) 
+        case 87:
+          ball[0].velocityY -= 10;
+          console.log('W key pressed!');
+          break;
+
+        // key code for Left (a) 
+        case 65:
+          ball[0].velocityX -= 1;
+          console.log('A key pressed!');
+          break;
+
+        // key code for Down (s) 
+        case 83:
+          ball[0].velocityY += 1;
+          console.log('S key pressed!');
+          break;
+
+        // key code for Right (d) 
+        case 68:
+          ball[0].velocityX += 1;
+          console.log('D key pressed!');
+          break;
+        //key code for right (r)
+        case 82:
+          ball[0].rotateSpeed += 1;
+          console.log("R");
+          break;
+
+        //key code for left (T)
+        case 84:
+          ball[0].rotateSpeed -= 1;
+          console.log("T");
+      }
+    });//end of keypress
+	</script>
+
+</body>
+
+</html>
